@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Барбершоп</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>BARBERSHOP</h1>
+        <a href="#book" class="booking">Записаться</a>
+    </header>
+
+    <!-- Модальное окно для записи -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Запись на услугу</h2>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label for="name">Имя:</label>
+                    <input type="text" id="name" name="name" required />
+                </div>
+                <div class="form-group">
+                    <label for="phone">Номер телефона:</label>
+                    <input type="tel" id="phone" name="phone" required />
+                </div>
+                <div class="form-group">
+                    <label for="service">Услуга:</label>
+                    <select id="service" name="service" required>
+                        <option value="">Выберите услугу</option>
+                        <option value="main">Основные услуги</option>
+                        <option value="shave">Бритье</option>
+                        <option value="combo">Комплекс</option>
+                    </select>
+                </div>
+                <div class="form-group" id="subServiceContainer" style="display:none;">
+                    <label for="subService">Подуслуга:</label>
+                    <select id="subService" name="subService" required></select>
+                </div>
+                <button type="submit" class="button">Записаться</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Открытие и закрытие модального окна
+        const modal = document.getElementById("bookingModal");
+        const btn = document.querySelector(".booking");
+        const span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Динамическое изменение подуслуг
+        const serviceSelect = document.getElementById("service");
+        const subServiceSelect = document.getElementById("subService");
+        const subServiceContainer = document.getElementById("subServiceContainer");
+
+        const services = {
+            main: [
+                { value: "maleCut", text: "Стрижка мужская" },
+                { value: "complexCut", text: "Стрижка любой сложности" },
+                { value: "clipperCut", text: "Стрижка под машинку" },
+                { value: "kidsCut", text: "Стрижка для детей до 12 лет" }
+            ],
+            shave: [
+                { value: "beardModeling", text: "Моделирование бороды" },
+                { value: "royalShave", text: "Королевское бритье" }
+            ],
+            combo: [
+                { value: "fatherSonCut", text: "Стрижка отца и сына" },
+                { value: "maleCutBeard", text: "Стрижка и моделирование бороды" }
+            ]
+        };
+
+        serviceSelect.onchange = function () {
+            const selectedService = this.value;
+            subServiceSelect.innerHTML = ""; // Очистить предыдущие подуслуги
+            subServiceContainer.style.display = selectedService ? "block" : "none";
+
+            if (selectedService) {
+                services[selectedService].forEach(sub => {
+                    const option = document.createElement("option");
+                    option.value = sub.value;
+                    option.textContent = sub.text;
+                    subServiceSelect.appendChild(option);
+                });
+            }
+        };
+
+        // Обработка отправки формы
+        document.getElementById("bookingForm").onsubmit = function (e) {
+            e.preventDefault(); // Остановить отправку формы
+            alert("Запись успешно выполнена!\nИмя: " + document.getElementById("name").value +
+                "\nТелефон: " + document.getElementById("phone").value +
+                "\nУслуга: " + serviceSelect.options[serviceSelect.selectedIndex].text +
+                "\nПодуслуга: " + subServiceSelect.options[subServiceSelect.selectedIndex].text);
+            modal.style.display = "none"; // Закрыть модальное окно
+        }
+    </script>
+</body>
+</html>
